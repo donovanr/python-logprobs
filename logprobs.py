@@ -58,21 +58,32 @@ def add_log_weights(x,y):
         Add two probabilities in log space.
         This is a more numerically stable version of log(e^x + e^y).
     """
+    # addition is symmetric, so make x the bigger number => exp(y-x) < 1
     if y > x:
         y,x = x,y
-    import numpy as np
-    return x + np.log1p(np.exp(y-x))
+    # if one number is way smaller than the other, don't bother
+    # a difference much greater than e^300 over/undeflows 64-bit floats
+    if x - y > 300:
+        return x
+    else:
+        import numpy as np
+        return x + np.log1p(np.exp(y-x))
 
 def subtract_log_weights(x,y,warning=True):
     """
-        Subtract the second probability from the first  in log space.
+        Subtract the second probability from the first in log space.
         This is a more numerically stable version of log(e^x - e^y).
         Warnings result when trying to represent negative numbers in log space.
-        They are enabled by default.
+        They are enabled by default but can be supressed at your peril.
     """
     if y > x:
         if warning is True: # sometimes for testing it's useful to get Nans out rather than an exception, but an exception is the default
             raise Exception('Negative probability')
             print 'You are subtracting a bigger number from a smaller one; trying to represent a negative number in log-space is an indeterminate problem'
-    import numpy as np
-    return x + np.log1p(-np.exp(y-x))
+    # if the number being subtracted is way smaller than the other, ignore it.
+    # a difference much greater than e^300 over/undeflows 64-bit floats
+    if x - y > 300:
+        return x
+    else:
+        import numpy as np
+        return x + np.log1p(-np.exp(y-x))
