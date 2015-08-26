@@ -12,4 +12,12 @@ w = log(r) = log(p*q) = log(e^x * e^y) = log(e^(x + y)) = x + y
 ```
 So the function `multiply_log_weights` assumes you already have `x` and `y`, the log space representations of some probabilities, and returns the log space result of multiplying the probabilities, i.e. adding the log space values. To get back to normal space, just exponentiate using `convert_logweight_to_standard(w)`.  If you don't have `x` to start with, but only `p`, you gan get it using `convert_standard_to_logweight(p)`, which simply takes a log.
 
-Currently, the only non-obvious functions in the module are adding and subtracting log probabilities.
+Doing addition and subtraction is the hard part, becasue if you do the naive thing:
+```
+w = log(r) = log(p + q) = log(e^x + e^y)
+```
+those exponentials are still a problem, and you under/overflow at the same point.  Fortunately, there's an easy fix:
+```
+log(e^x + e^y) = log(e^x(1 + e^(y-x))) = log(e^x) + log(1 + e^(y-x)) = x + log1p(e^(y-x))
+```
+where `log1p(x) = log(1+x)` is a function optimized for logs of numbers that are close to one, and we assume, without loss of generality, that `x > y`.  Now the computation only over/underflows if the difference in the magnidude of the numbers is very large, a situation that happens much less often.
