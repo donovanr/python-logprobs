@@ -63,7 +63,7 @@ def add_log_weights(x,y):
         y,x = x,y
     # if one number is way smaller than the other, don't bother
     # a difference much greater than e^300 over/undeflows 64-bit floats
-    if x - y > 300:
+    if x - y > 40:
         return x
     else:
         import numpy as np
@@ -82,7 +82,7 @@ def subtract_log_weights(x,y,warning=True):
             print 'You are subtracting a bigger number from a smaller one; trying to represent a negative number in log-space is an indeterminate problem'
     # if the number being subtracted is way smaller than the other, ignore it.
     # a difference much greater than e^300 over/undeflows 64-bit floats
-    if x - y > 300:
+    if x - y > 40:
         return x
     else:
         import numpy as np
