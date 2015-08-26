@@ -22,6 +22,14 @@
 """
 
 
+## class to hold both normal and log weights
+
+class Weight:
+    def __init__(self, standardweight, logweight):
+        self.standard = standardweight
+        self.log = logweight
+
+
 ## functions for converting between log space and normal space
 
 def convert_standard_to_logweight(standardweight):
